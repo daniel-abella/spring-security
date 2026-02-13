@@ -1,0 +1,219 @@
+{
+	"info": {
+		"_postman_id": "03296ed9-8a12-4130-9cf3-55347a59a9af",
+		"name": "spring-boot-authentication-authorization",
+		"description": "Coleção com requests para os endpoints de produto e explicações de como as anotações de segurança funcionam (cenários user vs admin).",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "20725721"
+	},
+	"item": [
+		{
+			"name": "Get Products (list) Free",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/products",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"products"
+					]
+				},
+				"description": "Endpoint anotado com @PermitAll (método) — qualquer chamador pode invocar o método, mas o acesso HTTP ainda requer autenticação básica por configuração do HttpSecurity.\n\nCenários:\n- Com credenciais `user`/`password` (role USER): Retorna 200 com lista (esperado).\n- Sem credenciais: 401 (se HttpSecurity exigir autenticação)."
+			},
+			"response": []
+		},
+		{
+			"name": "Create Product (ADMIN)",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "password",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"Notebook\",\n  \"description\": \"Notebook 14\",\n  \"price\": 2499.90\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/products",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"products"
+					]
+				},
+				"description": "Endpoint anotado com @PreAuthorize(\"hasRole('ADMIN')\") — avaliado antes da execução.\n\nCenários:\n- Com credenciais `user`/`password` (role USER): 403 Forbidden (não possui ADMIN).\n- Com credenciais `admin`/`password` (role ADMIN): 201 Created (produto criado).\n- Observação: o role ADMIN deve existir no banco; o DataInitializer pode criar esse usuário se necessário."
+			},
+			"response": []
+		},
+		{
+			"name": "Get Product by id (PreAuthorize param)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/products/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"products",
+						"1"
+					]
+				},
+				"description": "Endpoint anotado com @PreAuthorize(\"hasRole('ADMIN') or #id == 1\").\n\nCenários:\n- `user`/`password` pedindo id=1: permitido (porque #id == 1).\n- `user`/`password` pedindo id=2: 403 Forbidden (não ADMIN e id != 1).\n- `admin`/`password`: permite qualquer id."
+			},
+			"response": []
+		},
+		{
+			"name": "PostAuthorize example",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/products/post/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"products",
+						"post",
+						"1"
+					]
+				},
+				"description": "Endpoint anotado com @PostAuthorize('returnObject != null') — a expressão é avaliada após a execução do método e pode inspecionar o valor retornado.\n\nCenários: se o método retornar 404, a expressão será avaliada sobre o valor retornado (null), possivelmente resultando em comportamento customizado; aqui usamos apenas como exemplo educativo."
+			},
+			"response": []
+		},
+		{
+			"name": "Update Product (Secured ROLE_ADMIN)",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"Notebook Updated\",\n  \"description\": \"Updated\",\n  \"price\": 1999.99\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/products/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"products",
+						"1"
+					]
+				},
+				"description": "Endpoint anotado com @Secured({\"ROLE_ADMIN\"}) — verifica roles com prefixo ROLE_.\n\nCenários:\n- `user`/`password`: 403 Forbidden.\n- `admin`/`password`: 200 OK e produto atualizado."
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Product (RolesAllowed ADMIN)",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/products/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"products",
+						"1"
+					]
+				},
+				"description": "Endpoint anotado com @RolesAllowed({\"ADMIN\"}) — JSR-250.\n\nCenários:\n- `user`/`password`: 403 Forbidden.\n- `admin`/`password`: 204 No Content (deletado)."
+			},
+			"response": []
+		},
+		{
+			"name": "Forbidden endpoint (DenyAll)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/products/forbidden",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"products",
+						"forbidden"
+					]
+				},
+				"description": "Endpoint anotado com @DenyAll — sempre negado por segurança de métodos.\n\nCenário: qualquer credencial (user/admin) deve receber 403 ou comportamento de método-negado pelo Spring Security."
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "user",
+			"value": "user",
+			"type": "string"
+		},
+		{
+			"key": "user_password",
+			"value": "password",
+			"type": "string"
+		},
+		{
+			"key": "admin",
+			"value": "admin",
+			"type": "string"
+		},
+		{
+			"key": "admin_password",
+			"value": "password",
+			"type": "string"
+		}
+	]
+}
