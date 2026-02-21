@@ -4,20 +4,20 @@ import jakarta.persistence.*;
 import lombok.*;
 
 /**
- * Entidade `Permission` representa uma permissão/role utilizada pelo Spring Security.
+ * Entidade `Role` representa uma role/permission utilizada pelo Spring Security.
  * Exemplo: "ADMIN", "USER", "PRODUCT_READ".
  */
 @Entity
-@Table(name = "permissions")
+@Table(name = "roles")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Permission {
+public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(unique = true, nullable = false)
-    private String name; // nome da permissão (sem o prefixo ROLE_)
+    private String name; // nome da role (sem o prefixo ROLE_)
 }

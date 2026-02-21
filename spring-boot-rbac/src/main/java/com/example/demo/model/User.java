@@ -13,7 +13,7 @@ import java.util.Set;
  *
  * Observação: antes as roles eram armazenadas como String.
  * Agora relacionamos `User` com `Profile` (muitos-para-muitos),
- * onde cada `Profile` possui um conjunto de `Permission`.
+ * onde cada `Profile` possui um conjunto de `Role`.
  */
 @Entity
 @Table(name = "users")

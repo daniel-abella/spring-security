@@ -7,8 +7,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Entidade `Profile` agrupa um conjunto de `Permission`.
- * Um usuário pode possuir vários perfis; cada perfil possui várias permissões.
+ * Entidade `Profile` agrupa um conjunto de `Role`.
+ * Um usuário pode possuir vários perfis; cada perfil possui várias roles.
  */
 @Entity
 @Table(name = "profiles")
@@ -17,6 +17,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 public class Profile {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,10 +27,10 @@ public class Profile {
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-        name = "profile_permissions",
+        name = "profile_roles",
         joinColumns = @JoinColumn(name = "profile_id"),
-        inverseJoinColumns = @JoinColumn(name = "permission_id")
+        inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     @Builder.Default
-    private Set<Permission> permissions = new HashSet<>();
+    private Set<Role> roles = new HashSet<>();
 }

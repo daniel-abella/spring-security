@@ -2,7 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.model.User;
 import com.example.demo.model.Profile;
-import com.example.demo.model.Permission;
+import com.example.demo.model.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -25,8 +25,8 @@ public class CustomUserDetailsService implements UserDetailsService {
         java.util.Set<String> auths = new java.util.HashSet<>();
         if (u.getProfiles() != null) {
             for (Profile p : u.getProfiles()) {
-                if (p.getPermissions() != null) {
-                    for (Permission perm : p.getPermissions()) {
+                if (p.getRoles() != null) {
+                    for (Role perm : p.getRoles()) {
                         String name = perm.getName();
                         if (name == null || name.isBlank()) continue;
                         // garantir prefixo ROLE_ para compatibilidade com hasRole/@Secured
