@@ -19,6 +19,7 @@ import java.util.List;
 @RequestMapping("/api/products")
 @RequiredArgsConstructor
 public class ProductController {
+    
     private final ProductService productService;
 
     // @PermitAll: indica que o método pode ser invocado por qualquer chamador.

@@ -16,9 +16,10 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+        
         if (userService.findByUsername("user").isEmpty()) {
             User u = User.builder()
-                    .username("user")
+                    .username("abella")
                     .password("password")
                     .roles("USER")
                     .build();
@@ -26,7 +27,7 @@ public class DataInitializer implements CommandLineRunner {
         }
         if (userService.findByUsername("admin").isEmpty()) {
             User a = User.builder()
-                    .username("admin")
+                    .username("vinicius")
                     .password("password")
                     .roles("ADMIN")
                     .build();
